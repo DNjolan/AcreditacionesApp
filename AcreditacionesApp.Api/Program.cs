@@ -1,6 +1,18 @@
+using AcreditacionesApp.Api.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);   // 1. configurar la app
 
-builder.Services.AddControllers();                  // 2. soporte de controladores
+builder.Services.AddControllers()                   // 2. soporte de controladores
+    .AddJsonOptions(o =>
+        o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options
+        .UseNpgsql(builder.Configuration.GetConnectionString("Default"))
+        .UseSnakeCaseNamingConvention());
+
 builder.Services.AddEndpointsApiExplorer();         // 3. permite descubrir endpoints
 builder.Services.AddSwaggerGen();                   // 4. genera la documentaci[on
 
