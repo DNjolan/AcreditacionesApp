@@ -1,4 +1,5 @@
 using AcreditacionesApp.Api.Data;
+using AcreditacionesApp.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -15,6 +16,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();         // 3. permite descubrir endpoints
 builder.Services.AddSwaggerGen();                   // 4. genera la documentaci[on
+
+// Sin estado y seguro entre hilos -> Singleton: una sola instancia para toda la app.
+builder.Services.AddSingleton<IReloj, RelojSistem>();
+// Se apoya en IReloj pero tampoco guarda estado. Scoped es una elecci[on segura y com[un.
+builder.Services.AddScoped<IServicioDeVigencia, ServicioDeVigencia>();
 
 var app = builder.Build();                          // 5. "congela" la configuraci[on
 

@@ -1,6 +1,7 @@
 ﻿using AcreditacionesApp.Api.Data;
 using AcreditacionesApp.Api.Dtos;
 using AcreditacionesApp.Api.Entities;
+using AcreditacionesApp.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,9 +12,14 @@ namespace AcreditacionesApp.Api.Controllers;
 public class AcreditacionesController : ControllerBase   // ControllerBase = controlador sin vistas HTML
 {
     private readonly AppDbContext _db;
+    private readonly IServicioDeVigencia _vigencia;     // NUEVO
 
     // ASP.NET ve este constructor y nos entrega un AppDbContext (eso es la DI).
-    public AcreditacionesController(AppDbContext db) => _db = db;
+    public AcreditacionesController(AppDbContext db, IServicioDeVigencia vigencia)
+    {
+        _db = db;
+        _vigencia = vigencia;                           // el contenedor lo entrega solo 
+    }
 
     // POST api/acreditaciones
     [HttpPost]
@@ -110,9 +116,9 @@ public class AcreditacionesController : ControllerBase   // ControllerBase = con
     }
 
     // Change Tipo de acreditaci[on para la acreditaci[on 
-    // POST api/acreditaciones/5/PostChangeTipo
-    [HttpPost("{id:int}/PostChangeTipo")] // Decorador
-    public async Task<IActionResult> ChangeTipoOfAcreditacion(int id)
+    // POST api/acreditaciones/5/PostEstado
+    [HttpPost("{id:int}/PostEstado")] // Decorador
+    public async Task<IActionResult> ChangeEstadoOfAcreditacion(int id)
     {
         var acreditacion = await _db.Acreditaciones
             .FindAsync(id);
@@ -122,5 +128,19 @@ public class AcreditacionesController : ControllerBase   // ControllerBase = con
         acreditacion.Estado = EstadoAcreditacion.Pendiente;
         await _db.SaveChangesAsync();
         return Ok(acreditacion);
+    }
+
+    // GET api/acreditaciones/{id}/estado-vigencia
+    [HttpGet("{id:int}/estado-vigencia")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ObtenerEstadoVigencia(int id)
+    {
+        var acreditacionEstado = await _db.Acreditaciones
+            .FindAsync(id);
+        if (acreditacionEstado is null) return NotFound();
+
+        var estado = _vigencia.Calcular(acreditacionEstado.FechaEmision, acreditacionEstado.FechaVencimiento);
+        return Ok(estado.ToString());                   // .ToString() convierte el enum a texto
     }
 }
