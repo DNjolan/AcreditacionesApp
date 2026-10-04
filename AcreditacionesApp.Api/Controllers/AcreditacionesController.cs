@@ -109,7 +109,7 @@ public class AcreditacionesController : ControllerBase   // ControllerBase = con
         return NoContent();
     }
 
-    // Change Tipo de acreditaci[on para la acreditaci[on
+    // Change Tipo de acreditaci[on para la acreditaci[on 
     // POST api/acreditaciones/5/PostChangeTipo
     [HttpPost("{id:int}/PostChangeTipo")] // Decorador
     public async Task<IActionResult> ChangeTipoOfAcreditacion(int id)
