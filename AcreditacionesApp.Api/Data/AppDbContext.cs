@@ -9,7 +9,7 @@ namespace AcreditacionesApp.Api.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         // Un DbSet por tabla. "=> Set<T>" evita warnings de nulos.
-        public DbSet<TipoAcreditacion> TiposAcreditaciones => Set<TipoAcreditacion>();
+        public DbSet<TipoAcreditacion> TiposAcreditacion => Set<TipoAcreditacion>();
         public DbSet<Acreditacion> Acreditaciones => Set<Acreditacion>();
         public DbSet<RequisitoAcreditacion> Requisitos => Set<RequisitoAcreditacion>();
 
